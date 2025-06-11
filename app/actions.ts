@@ -352,7 +352,7 @@ export async function readProductById(
     // Représente qu'un seule produit 
     return {
       ...product,
-      categoryName: product.category?.name,
+      categoryName: product.category?.name
     };
   } catch (error) {
     console.error(error); // Loguer les erreurs
