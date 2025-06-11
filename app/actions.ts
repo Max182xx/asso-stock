@@ -2,7 +2,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Category } from "@prisma/client";
+import { FormDataType } from "@/type";
+import { Category, Product } from "@prisma/client";
 
 // Fonction pour vérifier si une association existe et l'ajouter si elle n'existe pas
 export async function checkAndAddAssociation(email: string, name: string) {
@@ -151,7 +152,9 @@ export async function deleteCategory(id: string, email: string) {
 }
 
 // Fonction pour récupérer toutes les catégories d'une association
-export async function readCategories(email: string): Promise<Category[] | undefined> {
+export async function readCategories(
+  email: string
+): Promise<Category[] | undefined> {
   // Vérifier si l'email est valide
   if (!email) {
     throw new Error("L'email de l'association est requis.");
@@ -175,6 +178,182 @@ export async function readCategories(email: string): Promise<Category[] | undefi
 
     // Retourner les catégories ou undefined si aucune n'a été trouvée
     return categories;
+  } catch (error) {
+    console.error(error); // Loguer les erreurs
+  }
+}
+
+export async function createPoduct(formData: FormDataType, email: string) {
+  try {
+    const { name, description, price, imageUrl, categoryId, unit } = formData;
+
+    // Vérifier les éléments valide
+    if (!email || !price || !categoryId || !email) {
+      throw new Error(
+        "Le nom, le prix , la catégorie et l'email de l'association sont requis pour la création du produit."
+      );
+    }
+    const safeImageUrl = imageUrl || "";
+    const safeUnit = unit || "";
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    await prisma.product.create({
+      data: {
+        name,
+        description,
+        price: Number(price),
+        imageUrl: safeImageUrl,
+        categoryId,
+        unit: safeUnit,
+        associationId: association.id,
+      },
+    });
+  } catch (error) {
+    console.error(error); // Loguer les erreurs
+  }
+}
+
+export async function updateProduct(formData: FormDataType, email: string) {
+  try {
+    const { id, name, description, price, imageUrl } = formData;
+
+    // Vérifier les éléments valide
+    if (!email || !price || !id || !email) {
+      throw new Error(
+        "L'id, le prix et l'email de l'association sont requis pour la création du produit."
+      );
+    }
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    await prisma.product.update({
+      where: {
+        id: id,
+        associationId: association.id,
+      },
+      data: {
+        name,
+        description,
+        price: Number(price),
+        imageUrl: imageUrl,
+      },
+    });
+  } catch (error) {
+    console.error(error); // Loguer les erreurs
+  }
+}
+
+export async function deleteProduct(id: string, email: string) {
+  try {
+    // Vérifier les éléments valide
+    if (!id) {
+      throw new Error("L'id est requis pour la suppression du produit.");
+    }
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    await prisma.product.delete({
+      where: {
+        id: id,
+        associationId: association.id,
+      },
+    });
+  } catch (error) {
+    console.error(error); // Loguer les erreurs
+  }
+}
+
+export async function readProduct(
+  email: string
+): Promise<Product[] | undefined> {
+  try {
+    // Vérifier les éléments valide
+    if (!email) {
+      throw new Error("L'email est requis.");
+    }
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    const products = await prisma.product.findMany({
+      where: {
+        associationId: association.id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    return products.map((product) => ({
+      ...product,
+      categoryName: product.category?.name,
+    }));
+  } catch (error) {
+    console.error(error); // Loguer les erreurs
+  }
+}
+
+export async function readProductById(
+  productId: string,
+  email: string
+): Promise<Product | undefined> {
+  try {
+    // Vérifier les éléments valide
+    if (!email) {
+      throw new Error("L'email est requis.");
+    }
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: productId,
+        associationId: association.id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (product) {
+      return undefined;
+    }
+
+    // Représente qu'un seule produit 
+    return {
+      ...product,
+      categoryName: product.category?.name,
+    };
   } catch (error) {
     console.error(error); // Loguer les erreurs
   }

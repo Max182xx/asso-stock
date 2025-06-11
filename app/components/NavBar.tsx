@@ -1,5 +1,5 @@
 import { UserButton, useUser } from "@clerk/nextjs";
-import { ListTree, Menu, PackagePlus, X } from "lucide-react";
+import { ListTree, Menu, PackagePlus, ShoppingBasket, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -13,7 +13,10 @@ const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Définir les liens de navigation
-  const navLinks = [{ href: "/category", label: "Catégories", icon: ListTree }];
+  const navLinks = [
+    { href: "/new-product", label: "Nouveau produit", icon: ShoppingBasket },
+    { href: "/category", label: "Catégories", icon: ListTree }
+  ];
 
   // Déclenche checkAndAddAssociation lorsque l'utilisateur est connecté et possède un email et un nom complet.
   useEffect(() => {
