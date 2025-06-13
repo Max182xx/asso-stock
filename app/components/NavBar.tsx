@@ -14,7 +14,8 @@ const NavBar = () => {
 
   // Définir les liens de navigation
   const navLinks = [
-    { href: "/new-product", label: "Nouveau produit", icon: ShoppingBasket },
+    { href: "/products", label: "Produits", icon: ShoppingBasket },
+    { href: "/new-product", label: "Nouveau produit", icon: PackagePlus },
     { href: "/category", label: "Catégories", icon: ListTree }
   ];
 
