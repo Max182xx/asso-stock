@@ -346,15 +346,20 @@ export async function readProductById(
     });
 
     if (product) {
+      // Si product existe, créons un nouvel objet avec toutes les propriétés de product
+      // et ajoutons une nouvelle propriété categoryName si category existe
+      return {
+        ...product,
+        categoryName: product.category?.name,
+      };
+    } else {
+      // Si product n'existe pas, retournerons undefined
       return undefined;
     }
 
-    // Représente qu'un seule produit 
-    return {
-      ...product,
-      categoryName: product.category?.name
-    };
+    // Gestion des erreurs
   } catch (error) {
-    console.error(error); // Loguer les erreurs
+    // Loguer l'erreur dans la console
+    console.error(error);
   }
 }

@@ -11,32 +11,33 @@ import { Trash } from "lucide-react";
 import { toast } from "react-toastify";
 
 const page = () => {
-  const { user } = useUser();
-  const email = user?.primaryEmailAddress?.emailAddress as string;
-  const [products, setProducts] = useState<Product[]>([]);
+  const { user } = useUser(); // Récupère l'utilisateur connecté
+  const email = user?.primaryEmailAddress?.emailAddress as string; // Obtient l'email de l'utilisateur
+  const [products, setProducts] = useState<Product[]>([]); // État pour stocker les produits
 
   const fetchProducts = async () => {
     try {
       if (email) {
-        const products = await readProduct(email);
+        const products = await readProduct(email); // Lit les produits par email
         if (products) {
-          setProducts(products);
+          setProducts(products); // Met à jour l'état des produits
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error(error); // Logue les erreurs dans la console
     }
   };
 
   useEffect(() => {
-    if (email) fetchProducts();
-  }, [email]);
+    if (email) fetchProducts(); // Appelle fetchProducts dès le chargement du composant si email existe
+  }, [email]); // Dépendance de useEffect : email
 
   const handleDeleteProduct = async (product: Product) => {
     const confirmDelete = confirm(
       "Voulez-vous vraiment supprimer ce produit ?"
-    );
-    if (!confirmDelete) return;
+    ); // Demande confirmation avant suppression
+    if (!confirmDelete) return; // Annule si l'utilisateur ne confirme pas
+
     try {
       if (product.imageUrl) {
         const resDelete = await fetch("/api/upload", {
@@ -46,17 +47,17 @@ const page = () => {
         });
         const dataDelete = await resDelete.json();
         if (!dataDelete.success) {
-          throw new Error("Erreur lors de la suppression de l’image.");
+          throw new Error("Erreur lors de la suppression de l'image.");
         } else {
           if (email) {
-            await deleteProduct(product.id, email);
-            await fetchProducts();
-            toast.success("Produit supprimé avec succès ");
+            await deleteProduct(product.id, email); // Supprime le produit
+            await fetchProducts(); // Rafraîchit la liste des produits
+            toast.success("Produit supprimé avec succès "); // Affiche une notification de succès
           }
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error(error); // Logue les erreurs dans la console
     }
   };
 
