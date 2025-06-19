@@ -363,3 +363,51 @@ export async function readProductById(
     console.error(error);
   }
 }
+
+// Fonction pour réapprovisionner le stock d'un produit spécifique avec une transaction.
+export async function replenishStockWithTransaction(
+  productId: string,
+  quantity: number,
+  email: string
+) {
+  try {
+    if (quantity <= 0) {
+      throw new Error("La quantité à ajouter doit être supérieure à zéro.");
+    }
+    // Vérifier les éléments valide
+    if (!email) {
+      throw new Error("L'email est requis.");
+    }
+
+    // Récupérer l'association par email
+    const association = await getAssociation(email);
+
+    // Si l'association n'est pas trouvée, lever une erreur
+    if (!association) {
+      throw new Error("Aucune association trouvée");
+    }
+
+    await prisma.product.update({
+      where: {
+        id: productId,
+        associationId: association.id,
+      },
+      data: {
+        quantity: {
+          increment: quantity,
+        },
+      },
+    });
+
+    await prisma.transaction.create({
+      data: {
+        type: "IN",
+        quantity: quantity,
+        productId: productId,
+        associationId: association.id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
