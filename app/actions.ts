@@ -465,8 +465,7 @@ export async function deductStockWithTransaction(
             },
           },
         });
-
-        await prisma.transaction.create({
+        await tx.transaction.create({
           data: {
             type: "OUT",
             quantity: item.quantity,
@@ -479,5 +478,6 @@ export async function deductStockWithTransaction(
     return { success: true };
   } catch (error) {
     console.error(error);
+    return { success: false, message: error };
   }
 }
