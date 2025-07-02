@@ -17,6 +17,7 @@ export interface FormDataType {
   imageUrl?: string;
 }
 
+// Interface pour les données d'un article
 export interface OrderItem {
     productId: string;
     quantity: number;

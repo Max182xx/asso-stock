@@ -9,11 +9,13 @@ interface ProductComponentProps {
   handleAddToCart?: (product: Product) => void;
 }
 
+// Composant React pour afficher les détails d'un produit
 const ProductComponent: React.FC<ProductComponentProps> = ({
   product,
   add,
   handleAddToCart,
 }) => {
+  // Si aucun produit n'est fourni, afficher un message d'attente
   if (!product) {
     return (
       <div className="border-2 border-base-200 p-4 rounded-3xl w-full flex items-center ">
@@ -22,6 +24,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
     );
   }
 
+  // Affiche les détails du produit
   return (
     <div className="border-2 border-base-200 p-4 rounded-3xl w-full flex items-center ">
       <div>
@@ -45,6 +48,7 @@ const ProductComponent: React.FC<ProductComponentProps> = ({
           {product.quantity} {product.unit}
         </div>
 
+        {/* Afficher le bouton d'ajout si add est true et handleAddToCart est défini */}
         {add && handleAddToCart && (
           <button
             onClick={() => handleAddToCart(product)}

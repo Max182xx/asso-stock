@@ -47,6 +47,7 @@ const page = () => {
     .filter((product) => !selectedProductIds.includes(product.id))
     .slice(0, 10);
 
+  // Fonction pour ajouter un produit au panier
   const handleAddToCart = (product: Product) => {
     setOrder((prevOrder) => {
       const existingProduct = prevOrder.find(
@@ -86,6 +87,7 @@ const page = () => {
     });
   };
 
+  // Fonction pour mettre à jour la quantité d'un produit dans le panier
   const handleQuantityChange = (productId: string, quantity: number) => {
     setOrder((prevOrder) =>
       prevOrder.map((item) =>
@@ -94,6 +96,7 @@ const page = () => {
     );
   };
 
+  // Fonction pour supprimer un produit du panier
   const handleRemoveFromCart = (productId: string) => {
     setOrder((prevOrder) => {
       const updatedOrder = prevOrder.filter(
@@ -106,6 +109,7 @@ const page = () => {
     });
   };
 
+  // Fonction pour soumettre la commande
   const handleSubmit = async () => {
     try {
       if (order.length == 0) {

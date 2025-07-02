@@ -412,6 +412,7 @@ export async function replenishStockWithTransaction(
   }
 }
 
+// Fonction pour déduire un don du stock
 export async function deductStockWithTransaction(
   orderItems: OrderItem[],
   email: string
@@ -429,22 +430,23 @@ export async function deductStockWithTransaction(
     if (!association) {
       throw new Error("Aucune association trouvée");
     }
-
+    // Parcourir chaque élément de commande
     for (const item of orderItems) {
+      // Récupérer le produit par son ID
       const product = await prisma.product.findUnique({
         where: { id: item.productId },
       });
-
+      // Si le produit n'est pas trouvé, lever une erreur
       if (!product) {
         throw new Error(`Produit avec l'ID ${item.productId} introuvable.`);
       }
-
+      // Vérifier si la quantité demandée est positive
       if (item.quantity <= 0) {
         throw new Error(
           `La quantité demandée pour ${product.name} doit être supérieur à zéro.`
         );
       }
-
+      // Vérifier si le stock disponible est suffisant
       if (product.quantity < item.quantity) {
         throw new Error(
           `Le produit "${product.name}" n'a pas assez de stock. Demandé: ${item.quantity}, Disponible: ${product.quantity} / ${product.unit}.`
@@ -452,8 +454,11 @@ export async function deductStockWithTransaction(
       }
     }
 
+    // Commencer une transaction Prisma
     await prisma.$transaction(async (tx) => {
+      // Pour chaque élément de commande
       for (const item of orderItems) {
+        // Mettre à jour le stock du produit
         await tx.product.update({
           where: {
             id: item.productId,
@@ -465,6 +470,7 @@ export async function deductStockWithTransaction(
             },
           },
         });
+        // Créer une transaction de sortie
         await tx.transaction.create({
           data: {
             type: "OUT",
