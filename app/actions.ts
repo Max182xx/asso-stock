@@ -2,7 +2,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { FormDataType, OrderItem } from "@/type";
+import { FormDataType, OrderItem, Transaction } from "@/type";
 import { Category, Product } from "@prisma/client";
 
 // Fonction pour vérifier si une association existe et l'ajouter si elle n'existe pas
@@ -486,4 +486,46 @@ export async function deductStockWithTransaction(
     console.error(error);
     return { success: false, message: error };
   }
+}
+
+export async function getTransactions(email: string, limit?: number): Promise<Transaction[]> {
+    try {
+        if (!email) {
+            throw new Error("l'email est requis .")
+        }
+
+        const association = await getAssociation(email)
+        if (!association) {
+            throw new Error("Aucune association trouvée avec cet email.");
+        }
+
+        const transactions = await prisma.transaction.findMany({
+            where: {
+                associationId: association.id
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            take: limit,
+            include: {
+                product: {
+                    include: {
+                        category: true
+                    }
+                }
+            }
+        })
+
+        return transactions.map((tx) => ({
+            ...tx,
+            categoryName: tx.product.category.name,
+            productName: tx.product.name,
+            imageUrl: tx.product.imageUrl,
+            price: tx.product.price,
+            unit: tx.product.unit,
+        }))
+    } catch (error) {
+        console.error(error)
+        return []
+    }
 }

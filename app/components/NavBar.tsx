@@ -4,6 +4,7 @@ import {
   ListTree,
   Menu,
   PackagePlus,
+  Receipt,
   ShoppingBasket,
   Warehouse,
   X,
@@ -26,7 +27,8 @@ const NavBar = () => {
     { href: "/products", label: "Produits", icon: ShoppingBasket },
     { href: "/new-product", label: "Nouveau produit", icon: PackagePlus },
     { href: "/category", label: "Catégories", icon: ListTree },
-    { href: "/give", label: "Donner", icon: HandHeart }
+    { href: "/give", label: "Donner", icon: HandHeart },
+    { href: "/transactions", label: "Transactions", icon: Receipt }
   ];
 
   // Déclenche checkAndAddAssociation lorsque l'utilisateur est connecté et possède un email et un nom complet.
