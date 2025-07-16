@@ -1,11 +1,22 @@
 "use client"
+import { useUser } from "@clerk/nextjs";
 import Wrapper from "./components/Wrapper";
+import ProductOverview from "./components/ProductOverview";
 
 export default function Home() {
+
+  // Utilisation de Clerk pour obtenir les informations de l'utilisateur connecté
+  const { user } = useUser();
+
+  // Récupération de l'email de l'utilisateur
+  const email = user?.primaryEmailAddress?.emailAddress as string;
+
   return (
     <Wrapper>
-    <div>
-      <button className="btn btn-sm"> test</button>
+    <div className="flex flex-col md:flex-row">
+        <div className="md:w-2/3">
+      <ProductOverview email={email}/>
+      </div>
     </div>
     </Wrapper>
   );

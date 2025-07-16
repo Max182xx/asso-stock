@@ -35,3 +35,10 @@ export interface Transaction extends PrismaTransaction {
     price: number;
     unit: string;
 }
+
+export interface ProductOverviewStats {
+    totalProducts: number;
+    totalCategories: number;
+    totalTransactions: number;
+    stockValue: number;
+}
