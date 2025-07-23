@@ -15,6 +15,8 @@ Assurez-vous d’avoir Node.js installé sur votre machine. Ensuite, installez l
 
 -React Toastify cmd : npm install --save react-toastify
 
+-Recharts : npm i recharts
+
 -Prisma cmd : npm install prisma --save-dev 
               npx prisma init --datasource-provider sqlite
 
@@ -22,7 +24,7 @@ Assurez-vous d’avoir Node.js installé sur votre machine. Ensuite, installez l
 
 -Pour créer les types : npx prisma generate
 
--Pour démarrer la BDD : npx prisma studio
+-Pour visualiser la BDD : npx prisma studio
 
 -Créations de l'autentifications avec clerk choiser les Next.js et suivre les instructions d'installations.
 

@@ -6,10 +6,11 @@ import {
   FormDataType,
   OrderItem,
   ProductOverviewStats,
+  StockSummary,
   Transaction,
 } from "@/type";
 import { Category, Product } from "@prisma/client";
-import { Transaction } from '@/type';
+import { Transaction } from "@/type";
 
 // Fonction pour vérifier si une association existe et l'ajouter si elle n'existe pas
 export async function checkAndAddAssociation(email: string, name: string) {
@@ -564,39 +565,123 @@ export async function getProductOverviewStats(
       },
     });
 
-    const transactions = await prisma.transaction.findMany (
-      {
-        where: {
+    const transactions = await prisma.transaction.findMany({
+      where: {
         associationId: association.id,
       },
+    });
 
-      }
-    )
+    const categoriesSet = new Set(
+      products.map((product) => product.category.name)
+    );
 
-    const categoriesSet = new Set(products.map((product)=> product.category.name))
+    const totalProducts = products.length;
+    const totalCategories = categoriesSet.size;
+    const totalTransactions = transactions.length;
+    const stockValue = products.reduce((acc, product) => {
+      return acc + product.price * product.quantity;
+    }, 0);
 
-    const totalProducts = products.length
-    const totalCategories = categoriesSet.size
-    const totalTransactions = transactions.length
-    const stockValue = products.reduce((acc, product)=>{
-      return acc + product.price * product.quantity
-    }, 0)
-    
-
-   return {
-    totalProducts,
-    totalCategories,
-    totalTransactions,
-    stockValue,
-   }
-
+    return {
+      totalProducts,
+      totalCategories,
+      totalTransactions,
+      stockValue,
+    };
   } catch (error) {
     console.error(error);
-   return {
-    totalProducts: 0,
-    totalCategories: 0,
-    totalTransactions: 0,
-    stockValue: 0,
-   }
+    return {
+      totalProducts: 0,
+      totalCategories: 0,
+      totalTransactions: 0,
+      stockValue: 0,
+    };
+  }
+}
+
+export async function getProductCategoryDistribution(email: string) {
+  try {
+    if (!email) {
+      throw new Error("l'email est requis .");
+    }
+
+    const association = await getAssociation(email);
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    const R = 5;
+
+    const categoriesWithProductCount = await prisma.category.findMany({
+      where: {
+        associationId: association.id,
+      },
+      include: {
+        products: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    const data = categoriesWithProductCount
+      .map((category) => ({
+        name: category.name,
+        value: category.products.length,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, R);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getStockSummary(email: string): Promise<StockSummary> {
+  try {
+    if (!email) {
+      throw new Error("l'email est requis .");
+    }
+
+    const association = await getAssociation(email);
+    if (!association) {
+      throw new Error("Aucune association trouvée avec cet email.");
+    }
+
+    const allProducts = await prisma.product.findMany({
+      where: {
+        associationId: association.id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    const inStock = allProducts.filter((p) => p.quantity > 5);
+    const lowStock = allProducts.filter(
+      (p) => p.quantity > 0 && p.quantity <= 0
+    );
+    const outOfStock = allProducts.filter((p) => p.quantity === 0);
+    const criticalProducts = [...lowStock, ...outOfStock];
+    return {
+      inStockCount: inStock.length,
+      lowStockCount: lowStock.length,
+      outOfStockCount: outOfStock.length,
+      criticalProducts: criticalProducts.map((p) => ({
+        ...p,
+        categoryName: p.category.name,
+      })),
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      inStockCount: 0,
+      lowStockCount: 0,
+      outOfStockCount: 0,
+      criticalProducts: [],
+    };
   }
 }

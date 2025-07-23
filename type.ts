@@ -42,3 +42,15 @@ export interface ProductOverviewStats {
     totalTransactions: number;
     stockValue: number;
 }
+
+export interface ChartData {
+    name: string;
+    value: number;
+}
+
+export interface StockSummary {
+    inStockCount: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    criticalProducts: Product[];
+  }
