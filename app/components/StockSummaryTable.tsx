@@ -4,9 +4,12 @@ import { getStockSummary } from "../actions";
 import ProductImage from "./ProductImage";
 import EmptyState from "./EmptyState";
 
+// Fonction composant qui prend un paramètre email
 const StockSummaryTable = ({ email }: { email: string }) => {
+  // Initialiser l'état avec null
   const [data, setData] = useState<StockSummary | null>(null);
 
+  // Fonction pour récupérer le résumé du stock
   const fetchSummary = async () => {
     try {
       if (email) {
@@ -20,10 +23,12 @@ const StockSummaryTable = ({ email }: { email: string }) => {
     }
   };
 
+  // Hook d'effet pour appeler fetchSummary lorsque email change
   useEffect(() => {
     if (email) fetchSummary();
   }, [email]);
 
+  // Gérer le cas où data est null
   if (!data)
     return (
       <div className="flex justify-center items-center w-full">

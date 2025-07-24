@@ -31,9 +31,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       />
 
       {/* Zone principale pour afficher le contenu */}
-      <div className="px-5 md:px-[10%] mt-8 mb-10">
-        {children}
-      </div>
+      <div className="px-5 md:px-[10%] mt-8 mb-10">{children}</div>
     </div>
   );
 };

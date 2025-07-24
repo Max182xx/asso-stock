@@ -6,10 +6,11 @@ import { Box, DollarSign, ShoppingCart, Tag } from "lucide-react";
 const ProductOverview = ({ email }: { email: string }) => {
   const [stats, setStats] = useState<ProductOverviewStats | null>(null);
 
+  // Fonction pour récupérer les statistiques du produit
   const fetchStats = async () => {
     try {
       if (email) {
-        const result = await getProductOverviewStats(email); // Lit les produits par email
+        const result = await getProductOverviewStats(email);
         if (result) {
           setStats(result); // Met à jour l'état des produits
         }
@@ -19,20 +20,23 @@ const ProductOverview = ({ email }: { email: string }) => {
     }
   };
 
+  // Fonction pour formater les nombres
   function formatNumber(value: number): string {
     if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
     if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
     return value.toFixed(1);
   }
 
+  // Hook d'effet pour appeler fetchStats lorsque email change
   useEffect(() => {
-    if (email) fetchStats(); // Appelle fetchProducts dès le chargement du composant si email existe
-  }, [email]); // Dépendance de useEffect : email
+    if (email) fetchStats();
+  }, [email]);
 
   return (
     <div>
       {stats ? (
         <div className="grid grid-cols-2 gap-4">
+          {/* Statistiques des produits */}
           <div className="border-2 p-4 border-base-200 rounded-3xl">
             <p className="stat-title">Produits en stock</p>
             <div className="flex justify-between items-center">
@@ -43,6 +47,7 @@ const ProductOverview = ({ email }: { email: string }) => {
             </div>
           </div>
 
+          {/* Nombre de catégories */}
           <div className="border-2 p-4 border-base-200 rounded-3xl">
             <p className="stat-title">Nombre de catégories</p>
             <div className="flex justify-between items-center">
@@ -53,6 +58,7 @@ const ProductOverview = ({ email }: { email: string }) => {
             </div>
           </div>
 
+          {/* Valeur totale du stock */}
           <div className="border-2 p-4 border-base-200 rounded-3xl">
             <p className="stat-title">Valeur totale du stock</p>
             <div className="flex justify-between items-center">
@@ -65,6 +71,7 @@ const ProductOverview = ({ email }: { email: string }) => {
             </div>
           </div>
 
+          {/* Total des transactions */}
           <div className="border-2 p-4 border-base-200 rounded-3xl">
             <p className="stat-title">Total des transactions</p>
             <div className="flex justify-between items-center">

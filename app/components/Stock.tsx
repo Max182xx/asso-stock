@@ -50,7 +50,9 @@ const Stock = () => {
 
     // Valider le produit sélectionné et la quantité
     if (!selectedProductId || quantity <= 0) {
-      toast.error("Veuillez sélectionner un produit et entrer une quantité valide.");
+      toast.error(
+        "Veuillez sélectionner un produit et entrer une quantité valide."
+      );
       return;
     }
 
@@ -59,7 +61,7 @@ const Stock = () => {
       if (email) {
         await replenishStockWithTransaction(selectedProductId, quantity, email);
       }
-      
+
       // Afficher un message de succès et réinitialiser le formulaire
       toast.success("Le stock a été réapprovisionné avec succès.");
       fetchProducts();
@@ -68,7 +70,9 @@ const Stock = () => {
       setSelectedProduct(null);
 
       // Fermer la boîte de dialogue
-      const modal = document.getElementById("my_modal_stock") as HTMLDialogElement;
+      const modal = document.getElementById(
+        "my_modal_stock"
+      ) as HTMLDialogElement;
       if (modal) {
         modal.close();
       }
@@ -84,7 +88,9 @@ const Stock = () => {
         <div className="modal-box">
           {/* En-tête de la boîte de dialogue */}
           <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">×</button>
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ×
+            </button>
           </form>
 
           <h3 className="font-bold text-lg">Gestion du Stock</h3>

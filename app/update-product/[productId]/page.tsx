@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const page = ({ params }: { params: Promise<{ productId: string }> }) => {
-  
   const { user } = useUser(); // Récupère l'utilisateur connecté
   const email = user?.primaryEmailAddress?.emailAddress as string; // Obtient l'email de l'utilisateur
   const [product, setProduct] = useState<Product | null>(null); // État pour stocker le produit

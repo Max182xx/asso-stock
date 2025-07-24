@@ -20,11 +20,11 @@ import Stock from "./Stock";
 const Navbar = () => {
   const { user } = useUser();
 
-   // Utiliser l'état pour gérer l'ouverture du menu Burger
+  // Utiliser l'état pour gérer l'ouverture du menu Burger
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-   // Définir les liens de navigation
+  // Définir les liens de navigation
   const navLinks = [
     { href: "/", label: "Tableau de Bord", icon: LayoutDashboard },
     { href: "/products", label: "Produits", icon: ShoppingBasket },
@@ -34,7 +34,7 @@ const Navbar = () => {
     { href: "/transactions", label: "Transactions", icon: Receipt },
   ];
 
-   // Déclenche checkAndAddAssociation lorsque l'utilisateur est connecté et possède un email et un nom complet.
+  // Déclenche checkAndAddAssociation lorsque l'utilisateur est connecté et possède un email et un nom complet.
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress && user.fullName) {
       checkAndAddAssociation(
@@ -87,7 +87,7 @@ const Navbar = () => {
           <span className="font-bold  text-xl">AssoStock</span>
         </div>
 
-{/* Bouton pour ouvrir/cacher le menu Burger */}
+        {/* Bouton pour ouvrir/cacher le menu Burger */}
         <button
           className=" btn w-fit sm:hidden btn-sm"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -95,13 +95,12 @@ const Navbar = () => {
           <Menu className="w-4 h-4" />
         </button>
 
- {/*Liens de navigation pour les écrans larges*/}
+        {/*Liens de navigation pour les écrans larges*/}
         <div className="hidden space-x-2 sm:flex items-center">
           {renderLinks("btn")}
           <UserButton />
         </div>
       </div>
-
 
       <div
         className={`absolute top-0 w-full bg-base-100 h-screen flex flex-col gap-2 p-4 
